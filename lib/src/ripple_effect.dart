@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:rect_getter/rect_getter.dart';
+import 'ripple_data.dart';
+
 
 class RipplePage extends StatefulWidget {
   RipplePage({
