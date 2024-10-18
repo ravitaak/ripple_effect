@@ -1,30 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:rect_getter/rect_getter.dart';
 
-import 'ripple_data.dart';
-
-/// Wrap your screen with this widget.
-///
-/// The ripple effect will growth until reaches this widget.
-/// It requires a [GlobalKey] that can be generated
-/// via [RipplePage.createGlobalKey()].
-///
-/// This should be used with the [RippleEffect] widget to work.
-///
-/// ```dart
-/// class Stateless extends StatelessWidget {
-///
-///   final pageKey = RipplePage.createGlobalKey();
-///
-///   @override
-///   Widget build(BuildContext context) {
-///     return RipplePage(
-///       child: Scaffold(body: MyPage()),
-///       pageKey: pageKey,
-///     );
-///   }
-/// }
-/// ```
 class RipplePage extends StatefulWidget {
   RipplePage({
     required GlobalKey<_RipplePageState> pageKey,
@@ -36,8 +12,7 @@ class RipplePage extends StatefulWidget {
   @override
   _RipplePageState createState() => _RipplePageState();
 
-  static GlobalKey<_RipplePageState> createGlobalKey() =>
-      new GlobalKey<_RipplePageState>();
+  static GlobalKey<_RipplePageState> createGlobalKey() => new GlobalKey<_RipplePageState>();
 }
 
 class _RipplePageState extends State<RipplePage> {
@@ -51,44 +26,24 @@ class _RipplePageState extends State<RipplePage> {
             ripples.entries.map((entry) => entry.value.toWidget()).toList(),
       );
 
-  Future<void> addRipple(GlobalKey key, RippleData data) async =>
-      this.ripples[key] = data;
+  Future<void> addRipple(GlobalKey key, RippleData data) async => this.ripples[key] = data;
 
   Future<void> startAnimation(GlobalKey<RectGetterState> key, VoidCallback callback) async {
     final data = ripples[key];
 
     setState(() {
-      data!.rect = RectGetter.getRectFromKey(key);
+      data!.rect = RectGetter.getRectFromKey(key)!;
     });
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      final inflateSize =
-          data!.inflateMultiplier * MediaQuery.of(context).size.longestSide;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final inflateSize = data!.inflateMultiplier * MediaQuery.of(context).size.longestSide;
       setState(() {
-        data.rect = data.rect?.inflate(inflateSize);
+        data.rect = data.rect.inflate(inflateSize);
       });
-      Future.delayed(data.animationDuration + data.delay, callback)
-          .then((_) => setState(() => data.rect = null));
+      Future.delayed(data.animationDuration + data.delay, callback).then((_) => setState(() => data.rect = Rect.zero));
     });
   }
 }
 
-/// Responsible to wrap the origin point of the ripple effect.
-///
-/// Often this should wrap a button widget or the animation
-/// start widget.
-/// It requires to call [RippleEffect.start] to start the animation.
-///
-/// ```dart
-/// RippleEffect(
-///   pageKey: pageKey,
-///   effectKey: effectKey,
-///   color: Colors.blue,
-///   child: FloatingActionButton(
-///     child: Icon(Icons.arrow_back),
-///     onPressed: () => RippleEffect.start(effectKey, toNextPage),
-///   ),
-/// )
-/// ```
 class RippleEffect extends StatefulWidget {
   RippleEffect({
     required this.pageKey,
@@ -113,8 +68,7 @@ class RippleEffect extends StatefulWidget {
   @override
   _RippleEffectState createState() => _RippleEffectState();
 
-  static GlobalKey<_RippleEffectState> createGlobalKey() =>
-      new GlobalKey<_RippleEffectState>();
+  static GlobalKey<_RippleEffectState> createGlobalKey() => new GlobalKey<_RippleEffectState>();
 
   /// Start the animation and call [callback] after the animation.
   static Future<void> start(
@@ -125,9 +79,7 @@ class RippleEffect extends StatefulWidget {
 
     final rippleState = rippleEffectState!.widget.pageKey.currentState;
 
-    return rippleState!.startAnimation(
-      rippleEffectState.rectGetterKey, callback
-    );
+    return rippleState!.startAnimation(rippleEffectState.rectGetterKey, callback);
   }
 }
 
